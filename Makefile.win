@@ -5,7 +5,6 @@ LUA=lua
 
 LUA_CFLAGS=`$(PKG_CONFIG) --cflags lua5.2 2>/dev/null || $(PKG_CONFIG) --cflags lua`
 SOCFLAGS=`$(PKG_CONFIG) --libs lua5.2 2>/dev/null || $(PKG_CONFIG) --libs lua`
-SOCC=$(CC) -O -shared $(SOCFLAGS)
 CFLAGS=-MD -O3 -g -Wall -Werror $(LUA_CFLAGS) -fvisibility=hidden -Wno-unused-function --std=gnu99 -D_CRT_SECURE_NO_DEPRECATE -DLUA_FFI_BUILD_AS_DLL
 
 MODNAME=ffi
@@ -32,7 +31,7 @@ call_x64win.h: call_x86.dasc dynasm/*.lua
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 $(MODDLL): ffi.o ctype.o parser.o call.o
-	$(SOCC) -o $@ $^
+	$(CC) -O -shared -o $@ $^ $(SOCFLAGS)
 
 test_cdecl.dll: test.o
-	$(SOCC) -o $@ $^
+	$(CC) -O -shared -o $@ $^ $(SOCFLAGS)
